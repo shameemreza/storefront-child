@@ -1,0 +1,99 @@
+/**
+ * Responsive Layout Adjustments
+ *
+ * This file contains styles for optimizing the site layout across different device sizes.
+ * It ensures proper display of navigation elements and content on mobile, tablet, and desktop views.
+ *
+ * @package     Storefront Child
+ * @version     1.0.0
+ */
+
+/* 
+ * Navigation Toggle Button
+ * Ensures proper display of the mobile menu toggle button
+ */
+body.wooninja-theme .site-header button.menu-toggle {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  float: none !important;
+  margin-left: auto !important;
+  background-color: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  color: #333 !important;
+  border-radius: 4px !important;
+  padding: 0.6em 1em !important;
+  font-size: 1em !important;
+  max-width: none !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  cursor: pointer !important;
+}
+
+/* Remove default toggle button styling */
+body.wooninja-theme .site-header button.menu-toggle::before,
+body.wooninja-theme .site-header button.menu-toggle::after,
+body.wooninja-theme .site-header button.menu-toggle span::before {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Custom hamburger icon styling */
+body.wooninja-theme .site-header button.menu-toggle .hamburger-icon svg {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 24px !important;
+  height: 24px !important;
+  vertical-align: middle !important;
+  margin-right: 5px !important;
+}
+
+/**
+ * Mobile Viewport Adjustments (up to 768px)
+ */
+@media screen and (max-width: 768px) {
+  body.wooninja-theme .site-header {
+    padding-top: 0.5em !important;
+    padding-bottom: 0.5em !important;
+  }
+
+  body.wooninja-theme .site-header .col-full {
+    height: auto !important;
+    min-height: 60px !important;
+    padding: 0 1em !important;
+  }
+
+  body.wooninja-theme .site-branding {
+    margin-bottom: 0 !important;
+  }
+
+  body.wooninja-theme .main-navigation.toggled .handheld-navigation {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/**
+ * Desktop Viewport Adjustments (769px and above)
+ */
+@media screen and (min-width: 769px) {
+  body.wooninja-theme .site-header button.menu-toggle {
+    display: none !important;
+  }
+
+  body.wooninja-theme .site-header {
+    padding-top: 2em !important;
+    padding-bottom: 2em !important;
+  }
+
+  body.wooninja-theme .site-header .col-full {
+    height: 80px !important;
+    padding: 0 2em !important;
+  }
+}

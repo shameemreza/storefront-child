@@ -1,0 +1,425 @@
+/* Import Google fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* CSS Variables */
+:root {
+  /* WooCommerce Purple Palette */
+  --woo-purple-10: #f6f2ff;
+  --woo-purple-20: #e9ddff;
+  --woo-purple-30: #dcc9ff;
+  --woo-purple-40: #ceb4ff;
+  --woo-purple-50: #a36bf7;
+  --woo-purple-60: #7f54b3;
+  --woo-purple-70: #533582;
+  --woo-purple-80: #3c1f60;
+  --woo-purple-90: #271041;
+
+  /* Grayscale */
+  --woo-white: #ffffff;
+  --woo-gray-10: #f7f7f7;
+  --woo-gray-20: #e5e5e5;
+  --woo-gray-30: #cccccc;
+  --woo-gray-40: #999999;
+  --woo-gray-50: #666666;
+  --woo-gray-60: #444444;
+  --woo-gray-70: #333333;
+  --woo-gray-80: #222222;
+  --woo-gray-90: #111111;
+  --woo-black: #000000;
+
+  /* Functional Colors */
+  --woo-error: #e01e5a;
+  --woo-success: #2eb67d;
+  --woo-warning: #ecb22e;
+  --woo-info: #36c5f0;
+}
+
+/* Global styles */
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  color: var(--woo-gray-70);
+  background-color: var(--woo-gray-10);
+}
+
+/* Remove focus outline styles from Storefront */
+button:focus,
+input[type="button"]:focus,
+input[type="reset"]:focus,
+input[type="submit"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+.button:focus,
+.added_to_cart:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Button styling */
+.button,
+.added_to_cart,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  background-color: var(--woo-purple-50);
+  border-color: var(--woo-purple-50);
+  color: var(--woo-white);
+  border-radius: 4px;
+  font-weight: 600;
+  padding: 0.6em 1.2em;
+  transition: all 0.2s ease;
+}
+
+.button:hover,
+.added_to_cart:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+input[type="submit"]:hover {
+  background-color: var(--woo-purple-60);
+  border-color: var(--woo-purple-60);
+  color: var(--woo-white);
+}
+
+/* Links */
+a {
+  color: var(--woo-purple-60);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--woo-purple-50);
+}
+
+/* Logo styling */
+.custom-logo-link {
+  margin-right: 1em;
+}
+
+.custom-logo-link img {
+  max-width: 180px;
+  height: auto;
+}
+
+/* Mobile menu enhancements */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* Critical fix for menu toggle display */
+.menu-toggle {
+  display: block !important;
+  border-radius: 4px;
+  padding: 0.6em 1em;
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  color: var(--woo-purple-80);
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Only show hamburger on mobile */
+@media screen and (min-width: 769px) {
+  .menu-toggle {
+    display: none !important;
+  }
+}
+
+.menu-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menu-toggle:focus {
+  outline-color: var(--woo-purple-40);
+}
+
+.toggled .menu-toggle {
+  background-color: var(--woo-purple-40);
+  border-color: var(--woo-purple-40);
+}
+
+.menu-toggle .hamburger-icon {
+  vertical-align: middle;
+  margin-right: 0.5em;
+  display: inline-block;
+}
+
+/* Ensure hamburger icon is visible */
+button.menu-toggle::before,
+button.menu-toggle::after,
+button.menu-toggle span::before {
+  display: none !important;
+}
+
+/* Override parent theme styles for the toggle button */
+button.menu-toggle {
+  float: none;
+  position: relative;
+  padding: 0.6em 1em;
+  font-size: 1em;
+  max-width: none;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+@media screen and (max-width: 768px) {
+  .main-navigation.toggled .handheld-navigation {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 1em;
+  }
+
+  .main-navigation ul.menu > li > a,
+  .main-navigation ul.nav-menu > li > a {
+    padding: 0.8em 1em;
+  }
+
+  .site-header-cart .cart-contents {
+    padding-right: 1em;
+  }
+
+  .site-header-cart .cart-contents .count {
+    margin-left: 0.3em;
+  }
+
+  .site-search {
+    margin-bottom: 1em;
+  }
+
+  /* Fix mobile menu behavior */
+  .main-navigation {
+    display: none;
+  }
+
+  .main-navigation.toggled {
+    display: block;
+  }
+
+  /* Force show hamburger menu */
+  .storefront-handheld-footer-bar,
+  .menu-toggle {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Fix menu toggle appearance */
+  button.menu-toggle {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: transparent;
+    color: var(--woo-purple-80);
+    border-radius: 4px;
+    padding: 0.6em 1em;
+    margin-left: auto;
+    position: relative;
+    float: none;
+    font-size: 1em;
+    max-width: none;
+    box-shadow: none;
+  }
+
+  /* Hide default hamburger icon elements and show our custom one */
+  button.menu-toggle::before,
+  button.menu-toggle::after,
+  button.menu-toggle span::before {
+    display: none !important;
+  }
+
+  /* Ensure hamburger icon is visible */
+  .hamburger-icon svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Fix site header height */
+  .site-header {
+    padding-top: 0.5em !important;
+    padding-bottom: 0.5em !important;
+  }
+
+  /* Fix site branding */
+  .site-branding {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Custom styles for the hero section */
+.hero-section {
+  padding: 4em 0;
+  background-color: #f8f8f8;
+}
+
+.hero-section img {
+  max-width: 200px;
+  border-radius: 50%;
+  margin-bottom: 1.5em;
+}
+
+.hero-section h1 {
+  margin-bottom: 0.5em;
+}
+
+.hero-section p {
+  font-size: 1.2em;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.product-filters {
+  margin: 2em 0;
+  padding: 1em;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+.product-filters ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product-filters li {
+  margin: 0.5em;
+}
+
+.product-filters a {
+  display: inline-block;
+  padding: 0.5em 1em;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.product-filters a:hover,
+.product-filters a.active {
+  background-color: var(--woo-purple-50);
+  color: #fff;
+  border-color: var(--woo-purple-50);
+}
+
+.cta-section {
+  background-color: #f0f0f0;
+  padding: 3em 0;
+  margin: 3em 0 0;
+  text-align: center;
+  position: relative;
+}
+
+.cta-section h2 {
+  margin-bottom: 1em;
+}
+
+.cta-section .button {
+  font-size: 1.1em;
+  padding: 0.8em 1.5em;
+  background-color: var(--woo-purple-50);
+  border-color: var(--woo-purple-50);
+}
+
+.cta-section .button:hover {
+  background-color: var(--woo-purple-70);
+  border-color: var(--woo-purple-70);
+}
+
+.site-footer {
+  background-color: var(--woo-purple-90);
+  color: var(--woo-gray-20);
+}
+
+.site-footer a:not(.button):not(.components-button) {
+  color: var(--woo-gray-10);
+}
+
+.site-footer .disclaimer {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9em;
+  color: var(--woo-gray-50);
+}
+
+/* --- Custom Footer Styles for Wooninja Child Theme --- */
+.wooninja-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0 0.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.footer-left {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+}
+.footer-right {
+  font-size: 1rem;
+}
+.footer-built-with-woo {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.footer-built-with-woo:hover {
+  color: #8ed1fc;
+}
+.footer-disclaimer {
+  margin-top: 1.5rem;
+  font-size: 1.05rem;
+  color: #e0e0e0;
+  background: rgba(0, 0, 0, 0.12);
+  padding: 1.2rem 1rem 1rem 1rem;
+  border-radius: 6px;
+  line-height: 1.6;
+}
+.footer-disclaimer p {
+  margin-bottom: 0.7rem;
+}
+.footer-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+.footer-links li {
+  display: inline;
+}
+.footer-links a {
+  color: #8ed1fc;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .wooninja-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

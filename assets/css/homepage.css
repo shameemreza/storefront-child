@@ -1,0 +1,623 @@
+/* Homepage specific styles */
+
+/* Hero section enhancements */
+.hero-section {
+  background-color: var(--woo-purple-90);
+  padding: 5em 0;
+  margin-bottom: 2em;
+  position: relative;
+  overflow: hidden;
+  color: var(--woo-white);
+}
+
+.hero-section:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(135, 62, 255, 0.2) 0%,
+    rgba(114, 14, 236, 0.1) 100%
+  );
+  z-index: 0;
+}
+
+/* Floating animation for the gradient overlay */
+@keyframes float-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Subtle particle animation */
+.hero-section:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 10% 20%,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px, 10px 30px;
+  z-index: 0;
+  animation: float-particles 60s linear infinite;
+}
+
+@keyframes float-particles {
+  0% {
+    background-position: 0 0, 20px 20px, 10px 30px;
+  }
+  100% {
+    background-position: 40px 40px, 60px 60px, 50px 70px;
+  }
+}
+
+.hero-section .col-full {
+  position: relative;
+  z-index: 1;
+}
+
+/* New hero content layout */
+.hero-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-image {
+  flex: 0 0 auto;
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.hero-image img {
+  border-radius: 50%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  border: 8px solid rgba(255, 255, 255, 0.15);
+  max-width: 240px;
+  height: auto;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
+  animation: rotate-slow 15s linear infinite;
+}
+
+@keyframes rotate-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-image:before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  background: linear-gradient(
+    135deg,
+    rgba(163, 107, 247, 0.6) 0%,
+    rgba(127, 84, 179, 0.3) 100%
+  );
+  border-radius: 50%;
+  z-index: 1;
+  filter: blur(15px);
+  opacity: 0.7;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+    filter: blur(15px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(20px);
+  }
+  100% {
+    opacity: 0.7;
+    filter: blur(15px);
+  }
+}
+
+.hero-image:hover img {
+  transform: scale(1.05) rotate(3deg);
+  border-color: rgba(255, 255, 255, 0.25);
+  animation-play-state: paused;
+}
+
+.hero-text {
+  flex: 1 1 auto;
+  text-align: left;
+  animation: fade-in-up 1s ease-out;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-section h1 {
+  font-size: 3.5em;
+  margin-bottom: 0.5em;
+  color: var(--woo-white);
+  font-weight: 800;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+  display: inline-block;
+  animation: fade-in-left 1s ease-out;
+}
+
+@keyframes fade-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero-section h1:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.2em;
+  width: 2em;
+  height: 5px;
+  background: var(--woo-purple-40);
+  border-radius: 10px;
+  animation: width-expand 1.5s ease-out forwards;
+}
+
+@keyframes width-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 2em;
+    opacity: 1;
+  }
+}
+
+.hero-section p {
+  font-size: 1.25em;
+  margin: 0;
+  color: var(--woo-gray-10);
+  line-height: 1.7;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  animation: fade-in 1.5s ease-out;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
+
+/* Product filters enhancements */
+.product-filters {
+  margin: 2em 0;
+  padding: 1.5em;
+  background-color: var(--woo-gray-10);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-filters h2 {
+  text-align: center;
+  margin-bottom: 1em;
+  color: var(--woo-purple-70);
+  font-weight: 600;
+}
+
+.product-filters ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.product-filters li {
+  margin: 0.25em;
+}
+
+.product-filters a {
+  display: inline-block;
+  padding: 0.7em 1.2em;
+  background-color: var(--woo-white);
+  border: 1px solid var(--woo-gray-20);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--woo-gray-90);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.product-filters a:hover {
+  background-color: var(--woo-purple-40);
+  color: var(--woo-white);
+  border-color: var(--woo-purple-40);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-filters a.active {
+  background-color: var(--woo-purple-50);
+  color: var(--woo-white);
+  border-color: var(--woo-purple-50);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Products section enhancements */
+.products-section {
+  padding: 2em 0;
+}
+
+.products-section h2 {
+  color: var(--woo-purple-70);
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.woocommerce-products.loading {
+  opacity: 0.5;
+  pointer-events: none;
+  position: relative;
+}
+
+.woocommerce-products.loading:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid rgba(114, 14, 236, 0.3);
+  border-top-color: var(--woo-purple-50);
+  border-radius: 50%;
+  animation: spin 0.8s infinite linear;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Product card styling */
+.wooninja-theme .woocommerce ul.products li.product {
+  background-color: var(--woo-white);
+  border: 1px solid var(--woo-gray-20);
+  border-radius: 12px;
+  padding: 1.8em;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+  margin-bottom: 2.5em !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 2.5em);
+}
+
+.wooninja-theme .woocommerce ul.products li.product:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  border-color: var(--woo-purple-40);
+}
+
+.wooninja-theme .woocommerce ul.products li.product a {
+  text-decoration: none;
+}
+
+.wooninja-theme
+  .woocommerce
+  ul.products
+  li.product
+  .woocommerce-loop-product__title {
+  color: var(--woo-gray-80);
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 0.8em;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.wooninja-theme .woocommerce ul.products li.product .price {
+  color: var(--woo-purple-60);
+  font-size: 1.4em;
+  font-weight: 700;
+  margin-bottom: 1.2em;
+}
+
+.wooninja-theme .woocommerce ul.products li.product .button {
+  width: 100%;
+  margin-top: auto; /* Pushes button to the bottom */
+  padding: 1em 1.2em;
+  font-size: 1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+}
+
+.wooninja-theme .woocommerce ul.products li.product .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wooninja-theme .woocommerce ul.products li.product img {
+  border-radius: 8px;
+  margin-bottom: 1.8em;
+  border: 1px solid var(--woo-gray-10);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.wooninja-theme .woocommerce ul.products li.product:hover img {
+  transform: scale(1.02);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.wooninja-theme .woocommerce ul.products li.product .star-rating {
+  margin: 0 auto 1.2em;
+  font-size: 0.9em;
+}
+
+/* Add a subtle label for product type */
+.wooninja-theme .woocommerce ul.products li.product::before {
+  content: "Product";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--woo-purple-50);
+  color: white;
+  padding: 0.3em 0.8em;
+  border-radius: 20px;
+  font-size: 0.7em;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Make sure sale badges look good */
+.wooninja-theme .woocommerce ul.products li.product .onsale {
+  top: 10px;
+  left: 10px;
+  right: auto;
+  margin: 0;
+  border-radius: 20px;
+  padding: 0.3em 0.8em;
+  min-height: auto;
+  min-width: auto;
+  font-weight: 600;
+  line-height: 1.5;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #e91e63;
+}
+
+/* CTA section enhancements */
+.cta-section {
+  background-color: var(--woo-purple-10);
+  padding: 4em 0;
+  margin: 3em 0 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(135, 62, 255, 0.1) 0%,
+    rgba(114, 14, 236, 0.05) 100%
+  );
+  z-index: 0;
+}
+
+.cta-section .col-full {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-section h2 {
+  font-size: 2.2em;
+  margin-bottom: 0.5em;
+  color: var(--woo-purple-90);
+  font-weight: 700;
+}
+
+.cta-section p {
+  font-size: 1.1em;
+  max-width: 700px;
+  margin: 0 auto 2em;
+  color: var(--woo-gray-90);
+}
+
+.cta-section .button {
+  font-size: 1.1em;
+  padding: 0.8em 1.8em;
+  background-color: var(--woo-purple-50);
+  border-color: var(--woo-purple-50);
+  color: var(--woo-white);
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cta-section .button:hover {
+  background-color: var(--woo-purple-70);
+  border-color: var(--woo-purple-70);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .hero-section {
+    padding: 3em 0;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .hero-text {
+    text-align: center;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5em;
+  }
+
+  .hero-section h1:after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .hero-section p {
+    font-size: 1.1em;
+    margin: 0 auto;
+  }
+
+  .hero-image {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .hero-image img {
+    max-width: 180px;
+    animation: rotate-slow 20s linear infinite;
+  }
+
+  .product-filters ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-filters li {
+    margin: 0.25em;
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .product-filters a {
+    display: block;
+    text-align: center;
+  }
+
+  .cta-section h2 {
+    font-size: 1.8em;
+  }
+
+  .wooninja-theme .woocommerce ul.products li.product {
+    padding: 1.5em;
+    margin-bottom: 2em !important;
+  }
+
+  .wooninja-theme
+    .woocommerce
+    ul.products
+    li.product
+    .woocommerce-loop-product__title {
+    font-size: 1.1em;
+  }
+
+  .wooninja-theme .woocommerce ul.products li.product .price {
+    font-size: 1.2em;
+  }
+}
+
+/* Smaller screen adjustments */
+@media screen and (max-width: 480px) {
+  .hero-section {
+    padding: 2.5em 0;
+  }
+
+  .hero-section h1 {
+    font-size: 2em;
+  }
+
+  .hero-image img {
+    max-width: 150px;
+  }
+
+  .hero-section p {
+    font-size: 1em;
+  }
+}

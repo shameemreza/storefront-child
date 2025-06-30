@@ -1,16 +1,16 @@
 # Storefront Child Theme
 
-A modern, clean child theme for WooCommerce's Storefront theme with enhanced header styling and mobile responsiveness.
+A modern, clean child theme for WooCommerce's Storefront theme with enhanced header styling, mobile responsiveness, and ninja-style profile animations.
 
 ## Features
 
-- Modern header layout with logo on left, menu and cart on right.
-- Smooth animations and hover effects.
-- Mobile-friendly responsive design.
-- Enhanced cart icon with notification badge.
-- Dropdown menu animations.
-- Customizable hero section (title, text, and image) via Customizer.
-- Custom color scheme using WooCommerce purple palette.
+- Modern header layout with logo on left and menu on right
+- Smooth animations and hover effects
+- Mobile-friendly responsive design
+- Ninja-style profile photo animations
+- Dropdown menu animations
+- Customizable hero section (title, text, and image) via Customizer
+- Custom color scheme using WooCommerce purple palette
 
 ![Theme Demo](.github/demo.gif)
 
@@ -53,7 +53,9 @@ You can modify these variables in the `main.css` file to change the color scheme
 - `functions.php` - Theme functions and customizations
 - `assets/css/main.css` - Main theme stylesheet
 - `assets/css/header.css` - Header-specific styles
-- `assets/js/navigation.js` - JavaScript for mobile menu and animations
+- `assets/css/homepage.css` - Homepage-specific styles
+- `assets/js/custom.js` - Main JavaScript functionality
+- `assets/js/navigation.js` - Mobile menu navigation
 
 ## Browser Support
 

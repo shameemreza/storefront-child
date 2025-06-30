@@ -4,27 +4,29 @@
 /* CSS Variables */
 :root {
   /* WooCommerce Purple Palette */
-  --woo-purple-10: #f6f2ff;
-  --woo-purple-20: #e9ddff;
-  --woo-purple-30: #dcc9ff;
-  --woo-purple-40: #ceb4ff;
-  --woo-purple-50: #a36bf7;
-  --woo-purple-60: #7f54b3;
-  --woo-purple-70: #533582;
-  --woo-purple-80: #3c1f60;
-  --woo-purple-90: #271041;
+  --woo-purple-10: #f6f2f9;
+  --woo-purple-20: #ebe0f5;
+  --woo-purple-30: #dcb8ff;
+  --woo-purple-40: #c292ff;
+  --woo-purple-50: #7f54b3;
+  --woo-purple-60: #674399;
+  --woo-purple-70: #533180;
+  --woo-purple-80: #3e2066;
+  --woo-purple-90: #2a0f4d;
 
   /* Grayscale */
+  --woo-gray-0: #f7f7f7;
+  --woo-gray-5: #f0f0f0;
+  --woo-gray-10: #e0e0e0;
+  --woo-gray-20: #c0c0c0;
+  --woo-gray-30: #a0a0a0;
+  --woo-gray-40: #808080;
+  --woo-gray-50: #606060;
+  --woo-gray-60: #404040;
+  --woo-gray-70: #303030;
+  --woo-gray-80: #202020;
+  --woo-gray-90: #101010;
   --woo-white: #ffffff;
-  --woo-gray-10: #f7f7f7;
-  --woo-gray-20: #e5e5e5;
-  --woo-gray-30: #cccccc;
-  --woo-gray-40: #999999;
-  --woo-gray-50: #666666;
-  --woo-gray-60: #444444;
-  --woo-gray-70: #333333;
-  --woo-gray-80: #222222;
-  --woo-gray-90: #111111;
   --woo-black: #000000;
 
   /* Functional Colors */
@@ -87,12 +89,12 @@ input[type="submit"]:hover {
 
 /* Links */
 a {
-  color: var(--woo-purple-60);
-  transition: color 0.2s ease;
+  color: var(--woo-purple-50);
+  transition: all 0.3s ease;
 }
 
 a:hover {
-  color: var(--woo-purple-50);
+  color: var(--woo-purple-60);
 }
 
 /* Logo styling */
@@ -180,14 +182,6 @@ button.menu-toggle {
     padding: 0.8em 1em;
   }
 
-  .site-header-cart .cart-contents {
-    padding-right: 1em;
-  }
-
-  .site-header-cart .cart-contents .count {
-    margin-left: 0.3em;
-  }
-
   .site-search {
     margin-bottom: 1em;
   }
@@ -259,12 +253,248 @@ button.menu-toggle {
 .hero-section {
   padding: 4em 0;
   background-color: #f8f8f8;
+  position: relative;
+  overflow: hidden;
 }
 
-.hero-section img {
-  max-width: 200px;
+/* Advanced ninja-style profile animation */
+.hero-image-container {
+  position: relative;
+  margin: 2em auto;
+  width: 250px;
+  height: 250px;
+  perspective: 1000px;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
   border-radius: 50%;
-  margin-bottom: 1.5em;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+  animation: ninja-float 3s ease-in-out infinite,
+    ninja-pulse 4s ease-in-out infinite, ninja-rotate 15s linear infinite;
+}
+
+.hero-image-container:hover .hero-image {
+  animation-play-state: paused;
+  transform: scale(1.05) rotateY(10deg);
+  box-shadow: 0 15px 30px rgba(127, 84, 179, 0.4);
+  border-color: rgba(127, 84, 179, 0.6);
+}
+
+/* Particle effects around the image */
+.hero-image-container::before,
+.hero-image-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+/* Inner rotating circle */
+.hero-image-container::before {
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border: 2px dashed var(--woo-purple-40);
+  animation: ninja-spin-reverse 20s linear infinite;
+}
+
+/* Outer glow effect */
+.hero-image-container::after {
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: radial-gradient(
+    circle at center,
+    transparent 60%,
+    rgba(127, 84, 179, 0.2) 100%
+  );
+  animation: ninja-pulse-glow 4s ease-in-out infinite;
+}
+
+/* Shuriken elements */
+.hero-image-container .shuriken {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: var(--woo-purple-50);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  z-index: 0;
+  opacity: 0.7;
+}
+
+.hero-image-container .shuriken:nth-child(1) {
+  top: 10%;
+  left: 0;
+  animation: shuriken-float 7s ease-in-out infinite,
+    shuriken-spin 3s linear infinite;
+}
+
+.hero-image-container .shuriken:nth-child(2) {
+  top: 70%;
+  right: 5%;
+  animation: shuriken-float 8s ease-in-out infinite 1s,
+    shuriken-spin 4s linear infinite reverse;
+}
+
+.hero-image-container .shuriken:nth-child(3) {
+  bottom: 10%;
+  left: 10%;
+  animation: shuriken-float 6s ease-in-out infinite 2s,
+    shuriken-spin 3.5s linear infinite;
+}
+
+/* Smoke effect */
+.hero-image-container .smoke {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  z-index: 0;
+  opacity: 0;
+  animation: smoke-appear 8s ease-in-out infinite;
+}
+
+/* Animation keyframes */
+@keyframes ninja-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes ninja-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes ninja-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ninja-spin-reverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes ninja-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shuriken-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(15px, 15px);
+  }
+  50% {
+    transform: translate(0, 30px);
+  }
+  75% {
+    transform: translate(-15px, 15px);
+  }
+}
+
+@keyframes shuriken-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes smoke-appear {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Smoke burst effect on click */
+.smoke-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.8) 0%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  animation: smoke-burst 1s ease-out forwards;
+}
+
+@keyframes smoke-burst {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.8;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
 }
 
 .hero-section h1 {

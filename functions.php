@@ -3,6 +3,91 @@
  * Storefront Child Theme functions and definitions
  */
 
+/**
+ * Disable WooCommerce Coming Soon mode when theme is activated
+ */
+function storefront_child_disable_coming_soon_mode() {
+    // Set the store to live mode
+    update_option('woocommerce_coming_soon', 'no');
+}
+add_action('after_switch_theme', 'storefront_child_disable_coming_soon_mode');
+
+/**
+ * Fix for the storefront_sticky_single_add_to_cart error in coming soon mode
+ */
+function storefront_child_fix_sticky_add_to_cart() {
+    // Remove the original action
+    remove_action('storefront_after_footer', 'storefront_sticky_single_add_to_cart', 999);
+    
+    // Add our custom implementation that checks for coming soon mode
+    add_action('storefront_after_footer', 'storefront_child_sticky_single_add_to_cart', 999);
+}
+add_action('init', 'storefront_child_fix_sticky_add_to_cart');
+
+/**
+ * Custom implementation of sticky add to cart that's safe in coming soon mode
+ */
+function storefront_child_sticky_single_add_to_cart() {
+    global $product;
+
+    if (class_exists('Storefront_Sticky_Add_to_Cart') || true !== get_theme_mod('storefront_sticky_add_to_cart')) {
+        return;
+    }
+
+    // Make sure we have a valid product object
+    if (!is_a($product, 'WC_Product') && is_product()) {
+        $product = wc_get_product(get_the_ID());
+        if (!$product) {
+            return;
+        }
+    }
+
+    // If still no valid product or not on a product page, exit
+    if (!is_a($product, 'WC_Product') || !is_product()) {
+        return;
+    }
+
+    $show = false;
+
+    if ($product->is_purchasable() && $product->is_in_stock()) {
+        $show = true;
+    } elseif ($product->is_type('external')) {
+        $show = true;
+    }
+
+    if (!$show) {
+        return;
+    }
+
+    $params = apply_filters(
+        'storefront_sticky_add_to_cart_params',
+        array(
+            'trigger_class' => 'entry-summary',
+        )
+    );
+
+    wp_localize_script('storefront-sticky-add-to-cart', 'storefront_sticky_add_to_cart_params', $params);
+
+    wp_enqueue_script('storefront-sticky-add-to-cart');
+    ?>
+        <section class="storefront-sticky-add-to-cart">
+            <div class="col-full">
+                <div class="storefront-sticky-add-to-cart__content">
+                    <?php echo wp_kses_post(woocommerce_get_product_thumbnail()); ?>
+                    <div class="storefront-sticky-add-to-cart__content-product-info">
+                        <span class="storefront-sticky-add-to-cart__content-title"><?php esc_html_e('You\'re viewing:', 'storefront'); ?> <strong><?php the_title(); ?></strong></span>
+                        <span class="storefront-sticky-add-to-cart__content-price"><?php echo wp_kses_post($product->get_price_html()); ?></span>
+                        <?php echo wp_kses_post(wc_get_rating_html($product->get_average_rating())); ?>
+                    </div>
+                    <a href="<?php echo esc_url($product->add_to_cart_url()); ?>" class="storefront-sticky-add-to-cart__content-button button alt" rel="nofollow">
+                        <?php echo esc_attr($product->add_to_cart_text()); ?>
+                    </a>
+                </div>
+            </div>
+        </section><!-- .storefront-sticky-add-to-cart -->
+    <?php
+}
+
 // Set up theme defaults and registers support for various WordPress features
 function storefront_child_setup() {
     // Add custom logo support
@@ -57,13 +142,6 @@ function storefront_child_enqueue_styles() {
         get_stylesheet_directory_uri() . '/assets/css/homepage.css',
         array('storefront-child-style'),
         wp_get_theme()->get('Version')
-    );
-    
-    // Enqueue responsive layout styles for cross-device compatibility
-    wp_enqueue_style('storefront-child-responsive',
-get_stylesheet_directory_uri() . '/assets/css/responsive-layout.css',
-        array('storefront-style', 'storefront-child-style', 'storefront-child-main'),
-        wp_get_theme()->get('Version') . '.' . time() // Force refresh with timestamp
     );
     
     // Enqueue custom JS
@@ -189,8 +267,6 @@ function storefront_child_body_classes($classes) {
 }
 add_filter('body_class', 'storefront_child_body_classes');
 
-// Category filter function already defined above
-
 // Add custom homepage template
 function storefront_child_add_page_templates($templates) {
     $templates['template-homepage-custom.php'] = 'Custom Homepage';
@@ -250,87 +326,23 @@ function storefront_child_add_css_variables() {
     </style>
     <?php
 }
-add_action('wp_head', 'storefront_child_add_css_variables', 5);
+add_action('wp_head', 'storefront_child_add_css_variables');
 
 /**
- * Customize Storefront header structure to match our desired layout
+ * Simplified header layout
+ * Removes cart and other redundant elements
  */
 function storefront_child_header_layout() {
     // Remove default header elements
+    remove_action('storefront_header', 'storefront_site_branding', 20);
     remove_action('storefront_header', 'storefront_secondary_navigation', 30);
     remove_action('storefront_header', 'storefront_product_search', 40);
-    remove_action('storefront_header', 'storefront_primary_navigation_wrapper', 42);
-    remove_action('storefront_header', 'storefront_primary_navigation', 50);
-    remove_action('storefront_header', 'storefront_primary_navigation_wrapper_close', 68);
-    // Do not remove storefront_header_cart here
+    
     // Add our custom header elements in the desired order
+    add_action('storefront_header', 'storefront_child_site_title', 20);
     add_action('storefront_header', 'storefront_primary_navigation', 30);
 }
 add_action('init', 'storefront_child_header_layout');
-
-/**
- * Header right section start
- */
-function storefront_child_header_right_start() {
-    echo '<div class="header-right">';
-}
-
-/**
- * Header right section end
- */
-function storefront_child_header_right_end() {
-    echo '</div>';
-}
-
-// Remove parent cart from header and add custom cart
-add_action('init', function() {
-    remove_action('storefront_header', 'storefront_header_cart', 60);
-    add_action('storefront_header', 'storefront_child_header_cart_custom', 60);
-});
-
-function storefront_child_header_cart_custom() {
-    $is_woo = (function_exists('storefront_is_woocommerce_activated') && storefront_is_woocommerce_activated()) || class_exists('WooCommerce');
-    if ( $is_woo ) {
-        $is_cart = function_exists('is_cart') && is_cart();
-        $class = $is_cart ? 'current-menu-item' : '';
-        ?>
-        <ul id="site-header-cart" class="site-header-cart menu">
-            <li class="<?php echo esc_attr( $class ); ?>">
-                <a class="cart-contents" href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View your shopping cart', 'storefront' ); ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon" style="vertical-align:middle;margin-right:4px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                    <span class="count" style="margin-left:4px;">
-                        <?php echo wp_kses_data( sprintf( _n( '%d item', '%d items', WC()->cart->get_cart_contents_count(), 'storefront' ), WC()->cart->get_cart_contents_count() ) ); ?>
-                    </span>
-                </a>
-            </li>
-            <li>
-                <?php the_widget( 'WC_Widget_Cart', 'title=' ); ?>
-            </li>
-        </ul>
-        <?php
-    } else {
-        // echo '<!-- WooCommerce not active or storefront_is_woocommerce_activated() missing -->';
-    }
-}
-
-/**
- * Cart Fragments
- * Ensure cart contents update when products are added to the cart via AJAX
- */
-function storefront_child_cart_link_fragment($fragments) {
-    $count = WC()->cart->get_cart_contents_count();
-    $fragments['a.cart-contents'] = '
-    <a class="cart-contents" href="' . esc_url(wc_get_cart_url()) . '" title="' . esc_attr__('View your shopping cart', 'storefront') . '" data-count="' . esc_attr($count) . '">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <span class="cart-count-badge">' . esc_html($count) . '</span>
-    </a>';
-    return $fragments;
-}
-add_filter('woocommerce_add_to_cart_fragments', 'storefront_child_cart_link_fragment');
 
 /**
  * Enqueue scripts and styles
@@ -360,230 +372,106 @@ function storefront_child_scripts() {
         '1.0.0',
         true
     );
-    
-    // Enqueue responsive navigation script for optimal cross-device experience
-    wp_enqueue_script(
-        'storefront-child-responsive-navigation',
-get_stylesheet_directory_uri() . '/assets/js/responsive-navigation.js',
-        array(),
-        wp_get_theme()->get('Version') . '.' . time(),
-        true
-    );
 }
 add_action('wp_enqueue_scripts', 'storefront_child_scripts');
 
-/**
- * Setup responsive navigation functionality
- * Creates necessary JavaScript files for enhanced navigation experience
- */
-function storefront_child_setup_navigation() {
-    // Create the js directory if it doesn't exist
-    $js_dir = get_stylesheet_directory() . '/assets/js';
-    if (!file_exists($js_dir)) {
-        mkdir($js_dir, 0755, true);
-    }
-    
-    // Create the navigation.js file with our custom code
-    $navigation_js = $js_dir . '/navigation.js';
-    if (!file_exists($navigation_js)) {
-        $js_content = '/**
- * Enhanced mobile navigation for Storefront Child Theme
- */
-(function($) {
-    "use strict";
-    
-    $(document).ready(function() {
-        // Mobile menu toggle
-        $(".menu-toggle").on("click", function() {
-            $(".main-navigation").slideToggle(300);
-            $(this).toggleClass("toggled");
-            
-            if ($(this).hasClass("toggled")) {
-                $(this).attr("aria-expanded", "true");
-                $(".main-navigation").addClass("toggled");
-            } else {
-                $(this).attr("aria-expanded", "false");
-                $(".main-navigation").removeClass("toggled");
-            }
-        });
-        
-        // Handle sub-menu toggles on mobile
-        if ($(window).width() < 768) {
-            $(".menu-item-has-children > a").after(\'<span class="sub-menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>\');
-            
-            $(".sub-menu-toggle").on("click", function(e) {
-                e.preventDefault();
-                $(this).toggleClass("active");
-                $(this).closest(".menu-item-has-children").find("> .sub-menu").slideToggle(200);
-            });
-        }
-        
-        // Adjust menu on resize
-        $(window).resize(function() {
-            if ($(window).width() > 768) {
-                $(".main-navigation").css("display", "");
-                $(".main-navigation").removeClass("toggled");
-            }
-        });
-        
-        // Add smooth scroll effect
-        $("a[href*=\'#\']:not([href=\'#\'])").click(function() {
-            if (location.pathname.replace(/^\//, "") === this.pathname.replace(/^\//, "") && location.hostname === this.hostname) {
-                var target = $(this.hash);
-                target = target.length ? target : $("[name=" + this.hash.slice(1) + "]");
-                if (target.length) {
-                    $("html, body").animate({
-                        scrollTop: target.offset().top - 100
-                    }, 800);
-                    return false;
-                }
-            }
-        });
-    });
-})(jQuery);';
-        file_put_contents($navigation_js, $js_content);
-    }
-}
-add_action('after_setup_theme', 'storefront_child_setup_navigation');
-
 // Automatically Delete Woocommerce Images After Deleting a Product
-add_action( 'before_delete_post', 'delete_product_images', 10, 1 );
+add_action('before_delete_post', 'delete_product_images', 10, 1);
 
-function delete_product_images( $post_id ) {
-        // Check if user has the capability to delete products
-        if ( !current_user_can( 'delete_products' ) ) {
-            return;
-        }
-    $product = wc_get_product( $post_id );
+function delete_product_images($post_id) {
+    // Check if user has the capability to delete products
+    if (!current_user_can('delete_products')) {
+        return;
+    }
+    $product = wc_get_product($post_id);
 
-    if ( !$product ) {
+    if (!$product) {
         return;
     }
     $featured_image_id = $product->get_image_id();
     $image_galleries_id = $product->get_gallery_image_ids();
 
-    if( !empty( $featured_image_id ) ) {
-        $is_featured_image_used = is_image_used( $featured_image_id, $post_id );
-        if ( !$is_featured_image_used ) {
-            wp_delete_attachment( $featured_image_id, true );
-        }
+    if ($featured_image_id && !is_image_used($featured_image_id, $post_id)) {
+        wp_delete_attachment($featured_image_id, true);
     }
 
-    if( !empty( $image_galleries_id ) ) {
-        foreach( $image_galleries_id as $single_image_id ) {
-            $is_image_used = is_image_used( $single_image_id, $post_id );
-            if ( !$is_image_used ) {
-                wp_delete_attachment( $single_image_id, true );
+    if ($image_galleries_id) {
+        foreach ($image_galleries_id as $image_id) {
+            if (!is_image_used($image_id, $post_id)) {
+                wp_delete_attachment($image_id, true);
             }
         }
     }
 }
 
-function is_image_used( $image_id, $current_product_id ) {
-    $query = new WP_Query( array(
-        'post_type' => 'product',
-        'post_status' => 'publish',
-        'meta_query' => array(
-            'relation' => 'OR',
-            array(
-                'key' => '_thumbnail_id',
-                'value' => $image_id,
-                'compare' => '='
-            ),
-
-            array(
-                'key' => '_product_image_gallery',
-                'value' => '"'.$image_id.'"',
-                'compare' => 'LIKE'
-            )
-        ),
-        'post__not_in' => array( $current_product_id ),
-        'fields' => 'ids',
-        'posts_per_page' => -1
-    ) );
-    return ( $query->have_posts() );
+function is_image_used($image_id, $current_product_id) {
+    global $wpdb;
+    
+    // Check if image is used as featured image for other posts
+    $featured_image_query = $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_thumbnail_id' AND meta_value = %d AND post_id != %d LIMIT 1",
+        $image_id,
+        $current_product_id
+    );
+    
+    $featured_image_result = $wpdb->get_var($featured_image_query);
+    
+    if ($featured_image_result) {
+        return true;
+    }
+    
+    // Check if image is used in gallery for other products
+    $gallery_query = $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_product_image_gallery' AND meta_value LIKE %s AND post_id != %d LIMIT 1",
+        '%' . $wpdb->esc_like($image_id) . '%',
+        $current_product_id
+    );
+    
+    $gallery_result = $wpdb->get_var($gallery_query);
+    
+    return $gallery_result ? true : false;
 }
 
-/**
- * Customize header structure
- */
+// Remove search from header
 function storefront_child_remove_search() {
     remove_action('storefront_header', 'storefront_product_search', 40);
 }
 add_action('init', 'storefront_child_remove_search');
 
 /**
- * Split site title into two parts for animation
+ * Custom site title with logo
  */
 function storefront_child_site_title() {
-    $site_title = get_bloginfo('name');
-    
-    // Check if the site title contains "Woo" and "Ninja"
-    if (strpos($site_title, 'Woo') !== false && strpos($site_title, 'Ninja') !== false) {
-        $title_parts = explode('Ninja', $site_title);
-        $woo_part = $title_parts[0];
-        
-        echo '<a href="' . esc_url(home_url('/')) . '" rel="home">';
-        echo '<span class="title-woo">' . esc_html($woo_part) . '</span>';
-        echo '<span class="title-ninja">Ninja</span>';
-        echo '</a>';
-    } else {
-        echo '<a href="' . esc_url(home_url('/')) . '" rel="home">' . esc_html($site_title) . '</a>';
-    }
-}
-
-/**
- * Replace default site title with our custom one
- */
-function storefront_child_replace_site_title() {
-    remove_action('storefront_site_branding', 'storefront_site_title_or_logo', 20);
-    add_action('storefront_site_branding', 'storefront_child_custom_title_or_logo', 20);
-}
-add_action('init', 'storefront_child_replace_site_title');
-
-/**
- * Custom title or logo function
- */
-function storefront_child_custom_title_or_logo() {
-    if (function_exists('the_custom_logo') && has_custom_logo()) {
-        the_custom_logo();
-    } elseif (function_exists('jetpack_has_site_logo') && jetpack_has_site_logo()) {
-        jetpack_the_site_logo();
-    } else {
-        echo '<div class="site-branding-text">';
-            if (is_front_page() || is_home()) : ?>
-                <h1 class="site-title"><?php storefront_child_site_title(); ?></h1>
+    ?>
+    <div class="site-branding">
+        <?php
+        if (function_exists('the_custom_logo') && has_custom_logo()) {
+            the_custom_logo();
+        } else {
+            if (is_front_page() && is_home()) : ?>
+                <h1 class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>" rel="home"><?php bloginfo('name'); ?></a></h1>
             <?php else : ?>
-                <p class="site-title"><?php storefront_child_site_title(); ?></p>
+                <p class="site-title"><a href="<?php echo esc_url(home_url('/')); ?>" rel="home"><?php bloginfo('name'); ?></a></p>
             <?php endif;
-
-            $description = get_bloginfo('description', 'display');
-            if ($description || is_customize_preview()) :
-                echo '<p class="site-description">' . $description . '</p>';
-            endif;
-        echo '</div>';
-    }
+        }
+        ?>
+    </div>
+    <?php
 }
 
-/**
- * Add data-text attribute to site title for 3D effect
- */
+// Filter site title markup
 function storefront_child_site_title_markup($title) {
     if (is_front_page()) {
-        $site_title = get_bloginfo('name');
-        return '<h1 class="site-title"><a href="' . esc_url(home_url('/')) . '" rel="home" data-text="' . esc_attr($site_title) . '">' . esc_html($site_title) . '</a></h1>';
-    } else {
-        $site_title = get_bloginfo('name');
-        return '<p class="site-title"><a href="' . esc_url(home_url('/')) . '" rel="home" data-text="' . esc_attr($site_title) . '">' . esc_html($site_title) . '</a></p>';
+        $title = str_replace('Woo', '<span class="title-woo">Woo</span>', $title);
+        $title = str_replace('Ninja', '<span class="title-ninja">Ninja</span>', $title);
     }
+    return $title;
 }
-add_filter('storefront_site_title_html', 'storefront_child_site_title_markup');
+add_filter('the_title', 'storefront_child_site_title_markup');
 
-/**
- * Add Hero Section customizer options
- */
+// Add customizer options
 function storefront_child_customize_register($wp_customize) {
-    // Hero Section Panel
+    // Hero Section
     $wp_customize->add_section('hero_section', array(
         'title'       => __('Hero Section', 'storefront-child'),
         'description' => __('Customize the homepage hero section', 'storefront-child'),
@@ -592,7 +480,7 @@ function storefront_child_customize_register($wp_customize) {
     
     // Hero Title
     $wp_customize->add_setting('hero_title', array(
-        'default'           => 'WooNinja Testing Playground',
+        'default'           => 'Ninja Testing Playground',
         'sanitize_callback' => 'sanitize_text_field',
         'transport'         => 'refresh',
     ));
@@ -655,9 +543,7 @@ function storefront_child_customize_register($wp_customize) {
 }
 add_action('customize_register', 'storefront_child_customize_register');
 
-/**
- * Add custom hero section styles based on customizer settings
- */
+// Add hero section styles
 function storefront_child_hero_section_styles() {
     $bg_color = get_theme_mod('hero_bg_color', '#271041');
     $text_color = get_theme_mod('hero_text_color', '#ffffff');
@@ -678,89 +564,3 @@ function storefront_child_hero_section_styles() {
     <?php
 }
 add_action('wp_head', 'storefront_child_hero_section_styles');
-
-/**
- * Add inline script for responsive navigation enhancement
- * Ensures proper display of navigation elements on mobile devices
- */
-function storefront_child_inline_responsive_navigation() {
-    if (wp_is_mobile()) {
-        ?>
-        <script type="text/javascript">
-            (function() {
-                // Fix mobile menu toggle visibility
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Force show hamburger menu
-                    var menuToggle = document.querySelector('.menu-toggle');
-                    if (menuToggle) {
-                        menuToggle.style.display = 'flex';
-                        menuToggle.style.visibility = 'visible';
-                        menuToggle.style.opacity = '1';
-                    }
-                    
-                    // Fix header padding
-                    var siteHeader = document.querySelector('.site-header');
-                    if (siteHeader) {
-                        siteHeader.style.paddingTop = '0.5em';
-                        siteHeader.style.paddingBottom = '0.5em';
-                    }
-                });
-                
-                // Fix any layout issues after a short delay
-                setTimeout(function() {
-                    var menuToggle = document.querySelector('.menu-toggle');
-                    if (menuToggle) {
-                        menuToggle.style.display = 'flex';
-                        menuToggle.style.visibility = 'visible';
-                        menuToggle.style.opacity = '1';
-                    }
-                }, 500);
-            })();
-        </script>
-        <?php
-    }
-}
-add_action('wp_footer', 'storefront_child_inline_responsive_navigation', 99);
-
-/**
- * Add critical inline styles for responsive navigation
- * Ensures proper styling of navigation elements on mobile devices
- */
-function storefront_child_critical_responsive_styles() {
-    if (wp_is_mobile()) {
-        ?>
-        <style type="text/css">
-            /* Critical responsive navigation styles */
-            @media screen and (max-width: 768px) {
-                .menu-toggle,
-                button.menu-toggle {
-                    display: flex !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                    position: relative !important;
-                    float: none !important;
-                    margin-left: auto !important;
-                }
-                
-                .site-header {
-                    padding-top: 0.5em !important;
-                    padding-bottom: 0.5em !important;
-                }
-                
-                .hamburger-icon svg {
-                    display: inline-block !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                }
-                
-                button.menu-toggle::before,
-                button.menu-toggle::after,
-                button.menu-toggle span::before {
-                    display: none !important;
-                }
-            }
-        </style>
-        <?php
-    }
-}
-add_action('wp_head', 'storefront_child_critical_responsive_styles', 999);

@@ -27,6 +27,64 @@ jQuery(document).ready(function ($) {
     });
   });
 
+  // Ninja profile interactive effects
+  const heroContainer = $(".hero-image-container");
+  const heroImage = $(".hero-image");
+  const shurikens = $(".shuriken");
+
+  // Mouse move effect for hero image
+  $(".hero-section").on("mousemove", function (e) {
+    if ($(window).width() < 768) return; // Skip on mobile
+
+    const containerRect = heroContainer[0].getBoundingClientRect();
+    const centerX = containerRect.left + containerRect.width / 2;
+    const centerY = containerRect.top + containerRect.height / 2;
+
+    // Calculate distance from center (normalized -1 to 1)
+    const moveX = ((e.clientX - centerX) / (containerRect.width / 2)) * 10;
+    const moveY = ((e.clientY - centerY) / (containerRect.height / 2)) * 10;
+
+    // Apply subtle tilt effect
+    heroImage.css({
+      transform: `perspective(1000px) rotateY(${moveX}deg) rotateX(${-moveY}deg)`,
+      transition: "transform 0.2s ease-out",
+    });
+
+    // Move shurikens in opposite direction for parallax effect
+    shurikens.each(function (index) {
+      const factor = (index + 1) * 0.5;
+      $(this).css({
+        transform: `translate(${-moveX * factor}px, ${-moveY * factor}px)`,
+        transition: "transform 0.3s ease-out",
+      });
+    });
+  });
+
+  // Reset on mouse leave
+  $(".hero-section").on("mouseleave", function () {
+    heroImage.css({
+      transform: "perspective(1000px) rotateY(0) rotateX(0)",
+      transition: "transform 0.5s ease-out",
+    });
+
+    shurikens.css({
+      transform: "translate(0, 0)",
+      transition: "transform 0.5s ease-out",
+    });
+  });
+
+  // Create smoke effect on click
+  heroContainer.on("click", function () {
+    // Create a new smoke element
+    const smoke = $('<div class="smoke-burst"></div>');
+    heroContainer.append(smoke);
+
+    // Animate and remove
+    setTimeout(function () {
+      smoke.remove();
+    }, 1000);
+  });
+
   // Ensure mobile menu toggle is visible on mobile devices
   function checkMobileMenuVisibility() {
     if ($(window).width() <= 768) {
@@ -92,49 +150,6 @@ jQuery(document).ready(function ($) {
           },
           500
         );
-    }
-  });
-
-  // Cart notification badge functionality
-  function updateCartNotification() {
-    var $cartCount = $(".site-header-cart .cart-contents .count");
-    var countValue = parseInt($cartCount.text().trim());
-
-    // Hide count if it's 0 or NaN
-    if (isNaN(countValue) || countValue === 0) {
-      if ($cartCount.length) {
-        $cartCount.hide();
-      }
-    } else {
-      if ($cartCount.length) {
-        $cartCount.show();
-      }
-    }
-  }
-
-  // Run on page load
-  updateCartNotification();
-
-  // Update when fragments are refreshed
-  $(document.body).on("wc_fragments_refreshed", function () {
-    updateCartNotification();
-  });
-
-  // Update when cart changes
-  $(document.body).on(
-    "added_to_cart removed_from_cart updated_cart_totals",
-    function () {
-      updateCartNotification();
-    }
-  );
-
-  // Fix cart hover issue - prevent selection of empty space
-  $(".site-header-cart").on("mouseenter mouseleave", function (e) {
-    if (
-      $(e.target).is(".site-header-cart") ||
-      $(e.target).closest(".site-header-cart").length
-    ) {
-      e.stopPropagation();
     }
   });
 

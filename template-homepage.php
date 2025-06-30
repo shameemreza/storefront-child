@@ -18,13 +18,22 @@ get_header(); ?>
             $hero_title = get_theme_mod('hero_title', 'WooNinja Testing Playground');
             $hero_description = get_theme_mod('hero_description', 'Welcome to my WooCommerce testing playground. This site is used for day-to-day testing of WooCommerce and WooCommerce.com extensions. As a Happiness Engineer, I use this environment to test, validate, and troubleshoot various WooCommerce functionalities.');
             $hero_image = get_theme_mod('hero_image', get_stylesheet_directory_uri() . '/assets/images/profile.png');
+            $hero_bg_color = get_theme_mod('hero_bg_color', '#f8f8f8');
+            $hero_text_color = get_theme_mod('hero_text_color', '#333333');
             ?>
-            <section class="hero-section">
+            <section class="hero-section" style="background-color: <?php echo esc_attr($hero_bg_color); ?>; color: <?php echo esc_attr($hero_text_color); ?>;">
                 <div class="col-full">
                     <div class="hero-content">
-                        <div class="hero-image">
-                            <img src="<?php echo esc_url($hero_image); ?>" alt="<?php echo esc_attr($hero_title); ?>" />
-                        </div>
+                        <?php if ($hero_image) : ?>
+                            <div class="hero-image-container">
+                                <!-- Ninja elements -->
+                                <div class="shuriken"></div>
+                                <div class="shuriken"></div>
+                                <div class="shuriken"></div>
+                                <div class="smoke"></div>
+                                <img class="hero-image" src="<?php echo esc_url($hero_image); ?>" alt="<?php echo esc_attr($hero_title); ?>" />
+                            </div>
+                        <?php endif; ?>
                         <div class="hero-text">
                             <h1><?php echo esc_html($hero_title); ?></h1>
                             <p><?php echo wp_kses_post($hero_description); ?></p>

@@ -10,4 +10,3 @@ build/
 
 # Ignore any media/demo folders (optional, if large locally)
 media/
-*.gif

@@ -3,13 +3,18 @@
 /* Main header container */
 .site-header {
   background-color: #fff;
-  padding-top: 1em;
+  padding-top: 1.5em;
   padding-bottom: 1em;
   margin-bottom: 0;
   border-bottom: 1px solid #eee;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 999;
+}
+
+/* For admin bar - add extra padding */
+.admin-bar .site-header {
+  padding-top: 2em;
 }
 
 .site-header .col-full {
@@ -248,23 +253,17 @@
   .menu-toggle {
     display: none !important;
   }
-
-  .site-header {
-    padding-top: 2em;
-    padding-bottom: 2em;
-  }
-
-  .site-header .col-full {
-    padding: 0 2em;
-    height: 80px;
-  }
 }
 
 /* Mobile styles */
 @media screen and (max-width: 768px) {
+  .site-header {
+    padding: 0.8em 0;
+  }
+
   .site-header .col-full {
-    height: 60px;
     padding: 0 1em;
+    height: auto;
   }
 
   .site-branding img,
@@ -273,42 +272,45 @@
   }
 
   .site-branding .site-title {
-    font-size: 1.3em;
+    font-size: 1.5em;
   }
+
   .site-branding .site-title a {
-    font-size: 0.95em;
+    font-size: 0.9em;
   }
 
   .site-branding .site-description,
   .desktop-only {
-    display: none !important;
+    display: none;
   }
 
   .main-navigation {
-    display: none;
-    width: 100%;
     position: absolute;
-    top: 60px;
+    top: 100%;
     left: 0;
-    background-color: #fff;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    right: 0;
+    background: #fff;
     z-index: 999;
+    display: none;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   }
 
   .main-navigation.toggled {
     display: block;
+    padding: 1em;
   }
 
   .main-navigation ul.menu,
   .main-navigation ul.nav-menu {
     display: block;
-    padding: 0 1em;
+    width: 100%;
   }
 
   .main-navigation ul li {
-    margin-right: 0;
+    display: block;
     width: 100%;
-    border-bottom: 1px solid #eee;
+    margin: 0;
+    border-bottom: 1px solid #f0f0f0;
   }
 
   .main-navigation ul li:last-child {
@@ -316,59 +318,55 @@
   }
 
   .main-navigation ul li a {
-    line-height: 50px;
-    padding: 0;
+    padding: 0.8em 0;
+    display: block;
+    line-height: 1.5;
+  }
+
+  .main-navigation ul.menu > li > a,
+  .main-navigation ul.nav-menu > li > a {
+    font-weight: 600;
+    padding: 1em 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .main-navigation ul.menu > li > a:hover,
+  .main-navigation ul.nav-menu > li > a:hover {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .main-navigation ul.menu > li.current-menu-item > a,
+  .main-navigation ul.nav-menu > li.current-menu-item > a {
+    color: var(--woo-purple-60);
+    background: rgba(127, 84, 179, 0.05);
   }
 }
 
-.main-navigation ul.menu > li > a,
-.main-navigation ul.nav-menu > li > a {
-  color: var(--woo-purple-80) !important;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.main-navigation ul.menu > li > a:hover,
-.main-navigation ul.menu > li > a:focus,
-.main-navigation ul.nav-menu > li > a:hover,
-.main-navigation ul.nav-menu > li > a:focus {
-  color: var(--woo-purple-50) !important;
-}
-
-.main-navigation ul.menu > li.current-menu-item > a,
-.main-navigation ul.nav-menu > li.current-menu-item > a {
-  color: var(--woo-purple-60) !important;
-  font-weight: 700;
-}
-
-/* Modern animated border for logo on focus */
+/* Accessibility focus styles */
 .site-branding .site-title a:focus-visible {
   outline: none;
   position: relative;
 }
+
 .site-branding .site-title a:focus-visible::before {
   content: "";
   position: absolute;
-  left: -12px;
-  top: -12px;
-  right: -12px;
-  bottom: -12px;
-  border: 3px solid var(--woo-purple-50);
-  border-radius: 8px;
-  pointer-events: none;
-  z-index: 2;
-  animation: logo-border-pop 0.4s cubic-bezier(0.4, 1.4, 0.4, 1);
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 2px solid var(--woo-purple-50);
+  border-radius: 4px;
+  animation: logo-border-pop 0.3s ease-out;
 }
+
 @keyframes logo-border-pop {
   0% {
+    transform: scale(0.95);
     opacity: 0;
-    transform: scale(0.8) rotate(-2deg);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.08) rotate(2deg);
   }
   100% {
+    transform: scale(1);
     opacity: 1;
-    transform: scale(1) rotate(0deg);
   }
 }
